@@ -2,6 +2,7 @@ flask
 tensorflow
 numpy
 pandas
+gunicorn
 scikit-learn
 joblib
-gunicorn
+
