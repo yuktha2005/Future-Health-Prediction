@@ -34,7 +34,6 @@ def index():
                     pregnancies, glucose, bloodpressure,
                     skinthickness, insulin, bmi, dpf, age
                 ]
-
                 scaled_features = scaler.transform([features])
                 result = model.predict(scaled_features)[0][0]
 
