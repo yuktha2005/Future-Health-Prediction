@@ -5,9 +5,16 @@ from tensorflow.keras.models import load_model
 
 app = Flask(__name__)
 
-# Load model and scaler
-model = load_model("model/diabetes_ann.h5")
-scaler = joblib.load("model/scaler.pkl")
+# Load models and scalers
+models = {
+    "diabetes": load_model("model/diabetes_ann.h5"),
+    "heart": load_model("model/heart_ann.h5")
+}
+
+scalers = {
+    "diabetes": joblib.load("model/scaler.pkl"),
+    "heart": joblib.load("model/scaler_heart.pkl")
+}
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -15,34 +22,57 @@ def index():
     error = None
 
     if request.method == "POST":
+        disease = request.form.get("disease")
+
         try:
-            pregnancies = float(request.form['pregnancies'])
-            glucose = float(request.form['glucose'])
-            bloodpressure = float(request.form['bloodpressure'])
-            skinthickness = float(request.form['skinthickness'])
-            insulin = float(request.form['insulin'])
-            bmi = float(request.form['bmi'])
-            dpf = float(request.form['dpf'])
-            age = float(request.form['age'])
+            features = []
 
-            # Basic input validation
-            if glucose <= 0 or bmi <= 0 or age <= 0:
-                error = "Invalid input values. Please enter realistic health parameters."
-
-            else:
+            if disease == "diabetes":
+                # Use unique names
                 features = [
-                    pregnancies, glucose, bloodpressure,
-                    skinthickness, insulin, bmi, dpf, age
+                    float(request.form['pregnancies']),
+                    float(request.form['glucose']),
+                    float(request.form['bloodpressure']),
+                    float(request.form['skinthickness']),
+                    float(request.form['insulin']),
+                    float(request.form['bmi']),
+                    float(request.form['dpf']),
+                    float(request.form['age_diabetes'])
                 ]
-                scaled_features = scaler.transform([features])
-                result = model.predict(scaled_features)[0][0]
 
-                prediction = "Diabetic" if result > 0.5 else "Non-Diabetic"
+            elif disease == "heart":
+                features = [
+                    float(request.form['age_heart']),
+                    float(request.form['sex']),
+                    float(request.form['cp']),
+                    float(request.form['trestbps']),
+                    float(request.form['chol']),
+                    float(request.form['fbs']),
+                    float(request.form['restecg']),
+                    float(request.form['thalach']),
+                    float(request.form['exang']),
+                    float(request.form['oldpeak']),
+                    float(request.form['slope']),
+                    float(request.form['ca']),
+                    float(request.form['thal'])
+                ]
 
-        except ValueError:
-            error = "Please enter valid numeric values."
+            # Check for negative values
+            if any(f < 0 for f in features):
+                error = "Please enter realistic positive values."
+            else:
+                scaled_features = scalers[disease].transform([features])
+                result = models[disease].predict(scaled_features)[0][0]
+                prediction = "Positive" if result > 0.5 else "Negative"
+
+        except Exception as e:
+            error = f"Invalid input. Please check values. ({str(e)})"
 
     return render_template("index.html", prediction=prediction, error=error)
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+
+
+
