@@ -44,7 +44,6 @@ history = model.fit(
     verbose=1
 )
 
-# Plot accuracy
 plt.figure()
 plt.plot(history.history['accuracy'], label='Training Accuracy')
 plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
@@ -57,6 +56,5 @@ plt.show()
 # Save model and scaler
 model.save("model/diabetes_ann.h5")
 joblib.dump(scaler, "model/scaler.pkl")
-
 print("Model and scaler saved successfully.")
 
