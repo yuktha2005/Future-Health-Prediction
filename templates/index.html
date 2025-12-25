@@ -2,86 +2,174 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Diabetes Prediction</title>
+    <title>Health Prediction Portal</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #121212;
+            min-height: 100vh;
+            color: #e0e0e0;
+        }
+        .card {
+            border-radius: 20px;
+            background: #1f1f1f;
+            padding: 30px;
+            max-width: 900px;
+            margin: auto;
+        }
+        h3 {
+            color: #00bcd4;
+        }
+        .btn-primary {
+            background-color: #00bcd4;
+            border: none;
+            transition: 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #0097a7;
+        }
+        .form-control {
+            background-color: #2a2a2a;
+            color: #e0e0e0;
+            border: 1px solid #555;
+        }
+        .form-control:focus {
+            border-color: #00bcd4;
+            box-shadow: 0 0 5px rgba(0, 188, 212, 0.5);
+            background-color: #2a2a2a;
+            color: #fff;
+        }
+        .form-select {
+            background-color: #2a2a2a;
+            color: #e0e0e0;
+            border: 1px solid #555;
+        }
+        .form-select:focus {
+            border-color: #00bcd4;
+            box-shadow: 0 0 5px rgba(0, 188, 212, 0.5);
+        }
+        .alert-success {
+            background-color: #388e3c;
+            color: #fff;
+            border: none;
+        }
+        .alert-danger {
+            background-color: #d32f2f;
+            color: #fff;
+            border: none;
+        }
+        .tooltip-inner {
+            background-color: #00bcd4;
+            color: #000;
+        }
+    </style>
+
+    <script>
+        function showFields() {
+            const disease = document.getElementById("diseaseSelect").value;
+            document.querySelectorAll(".disease-fields").forEach(el => el.style.display = "none");
+            document.querySelectorAll("." + disease + "-fields").forEach(el => el.style.display = "flex");
+        }
+        window.onload = showFields;
+    </script>
 </head>
-<body class="bg-light">
+<body>
 
-    <div class="container mt-5">
-        <div class="card shadow p-4">
-            <h3 class="text-center mb-4">Diabetes Prediction System</h3>
-
-            <form method="post">
-                <div class="row g-3">
-
-                    <div class="col-md-6">
-                        <input type="number" min="0" name="pregnancies" class="form-control"
-                               placeholder="Pregnancies" required>
-                    </div>
-
-                    <div class="col-md-6">
-                        <input type="number" min="1" name="glucose" class="form-control"
-                               placeholder="Glucose Level" required>
-                    </div>
-
-                    <div class="col-md-6">
-                        <input type="number" min="1" name="bloodpressure" class="form-control"
-                               placeholder="Blood Pressure" required>
-                    </div>
-
-                    <div class="col-md-6">
-                        <input type="number" min="0" name="skinthickness" class="form-control"
-                               placeholder="Skin Thickness" required>
-                    </div>
-
-                    <div class="col-md-6">
-                        <input type="number" min="0" name="insulin" class="form-control"
-                               placeholder="Insulin Level" required>
-                    </div>
-
-                    <div class="col-md-6">
-                        <input type="number" step="any" min="1" name="bmi" class="form-control"
-                               placeholder="BMI" required>
-                    </div>
-
-                    <div class="col-md-6">
-                        <input type="number" step="any" min="0" name="dpf" class="form-control"
-                               placeholder="Diabetes Pedigree Function" required>
-                    </div>
-
-                    <div class="col-md-6">
-                        <input type="number" min="1" name="age" class="form-control"
-                               placeholder="Age" required>
-                    </div>
-
-                </div>
-
-                <button type="submit" class="btn btn-primary w-100 mt-4">
-                    Predict
-                </button>
-            </form>
-
-            <!-- Error Message -->
-            {% if error %}
-                <div class="alert alert-danger mt-3 text-center">
-                    {{ error }}
-                </div>
-            {% endif %}
-
-            <!-- Prediction Result-->
-            {% if prediction %}
-                <div class="alert alert-success mt-3 text-center">
-                    Result: <strong>{{ prediction }}</strong>
-                </div>
-            {% endif %}
-
+<div class="container py-5">
+    <div class="card shadow-lg">
+        <div class="text-center mb-4">
+            <i class="fas fa-hospital fa-3x text-info mb-2"></i>
+            <h3>Health Prediction Portal</h3>
+            <p class="text-muted">Predict multiple health conditions instantly</p>
         </div>
+
+        <form method="post">
+            <div class="mb-3">
+                <select id="diseaseSelect" name="disease" class="form-select" onchange="showFields()">
+                    <option value="diabetes">Diabetes</option>
+                    <option value="heart">Heart Disease</option>
+                </select>
+            </div>
+
+            <!-- Diabetes Fields -->
+            <div class="row g-3 disease-fields diabetes-fields" style="display:flex;">
+                <div class="col-md-6"><input type="number" min="0" name="pregnancies" class="form-control" placeholder="Pregnancies" required></div>
+                <div class="col-md-6"><input type="number" min="1" name="glucose" class="form-control" placeholder="Glucose Level" required></div>
+                <div class="col-md-6"><input type="number" min="1" name="bloodpressure" class="form-control" placeholder="Blood Pressure" required></div>
+                <div class="col-md-6"><input type="number" min="0" name="skinthickness" class="form-control" placeholder="Skin Thickness" required></div>
+                <div class="col-md-6"><input type="number" min="0" name="insulin" class="form-control" placeholder="Insulin Level" required></div>
+                <div class="col-md-6"><input type="number" step="any" min="1" name="bmi" class="form-control" placeholder="BMI" required></div>
+                <div class="col-md-6"><input type="number" step="any" min="0" name="dpf" class="form-control" placeholder="Diabetes Pedigree Function" required></div>
+                <div class="col-md-6"><input type="number" min="1" name="age" class="form-control" placeholder="Age" required></div>
+            </div>
+
+            <!-- Heart Disease Fields -->
+            <div class="row g-3 disease-fields heart-fields" style="display:none;">
+                <div class="col-md-6"><input type="number" min="1" name="age" class="form-control" placeholder="Age" required></div>
+                <div class="col-md-6">
+                    <select name="sex" class="form-select" required>
+                        <option value="0">Female</option>
+                        <option value="1">Male</option>
+                    </select>
+                </div>
+                <div class="col-md-6"><input type="number" min="0" max="3" name="cp" class="form-control" placeholder="Chest Pain Type (0-3)" required></div>
+                <div class="col-md-6"><input type="number" min="0" name="trestbps" class="form-control" placeholder="Resting BP" required></div>
+                <div class="col-md-6"><input type="number" min="0" name="chol" class="form-control" placeholder="Cholesterol" required></div>
+                <div class="col-md-6">
+                    <select name="fbs" class="form-select" required>
+                        <option value="0"><=120 mg/dl</option>
+                        <option value="1">>120 mg/dl</option>
+                    </select>
+                </div>
+                <div class="col-md-6"><input type="number" min="0" name="restecg" class="form-control" placeholder="Resting ECG (0-2)" required></div>
+                <div class="col-md-6"><input type="number" min="0" name="thalach" class="form-control" placeholder="Max Heart Rate" required></div>
+                <div class="col-md-6">
+                    <select name="exang" class="form-select" required>
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+                <div class="col-md-6"><input type="number" min="0" step="any" name="oldpeak" class="form-control" placeholder="ST Depression" required></div>
+                <div class="col-md-6"><input type="number" min="0" name="slope" class="form-control" placeholder="Slope" required></div>
+                <div class="col-md-6"><input type="number" min="0" name="ca" class="form-control" placeholder="Major Vessels (0-3)" required></div>
+                <div class="col-md-6">
+                    <select name="thal" class="form-select" required>
+                        <option value="1">Normal</option>
+                        <option value="2">Fixed Defect</option>
+                        <option value="3">Reversible Defect</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mt-4 py-2">
+                <i class="fas fa-stethoscope me-2"></i> Predict
+            </button>
+        </form>
+
+        <!-- Error -->
+        {% if error %}
+        <div class="alert alert-danger mt-3 text-center">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <!-- Prediction -->
+        {% if prediction %}
+        <div class="alert alert-success mt-3 text-center">
+            <i class="fas fa-check-circle me-1"></i>
+            Result: <strong>{{ prediction }}</strong>
+        </div>
+        {% endif %}
+
     </div>
+</div>
 
 </body>
 </html>
